@@ -1,0 +1,67 @@
+% KIVONAT
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\selecthungarian
+
+%----------------------------------------------------------------------------
+% Abstract in Hungarian
+%----------------------------------------------------------------------------
+\chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
+
+Napjainkban egyre többet hallhatunk olyan szavakat mint \textit{Continuous Integration}, \textit{Continuous Deployment} vagy éppen \textit{Kubernetes}. Azt azonban már kevesen tudják mit is jelent mindez, milyen technológiákat és eszközöket hogyan célszerű használni.
+
+13 éves korom óta foglalkozom programfejlesztéssel. Akkoriban .NET-ben, egészen pontosan C\#-ban kezdtem el egy nagyobb programot írni, és bár még jelenleg is csak zárt körben használják, mégis felismertem azt a tényt, hogy bizony nagyon sok dologra oda kell figyelni ha az ember publikál egy alkalmazást: legyen felhasználóbarát, legyen biztonságos, gyorsan lehessen vele dolgozni, és még sorolhatnám. Elérkezett az a pont, hogy egyszerűen nem éreztem hatékonynak azt ahogyan dolgozom. Egyre több funkcióra kellett figyelnem, a határidők tartása végett hanyag kódrészlet került a programba, és tesztelve sem volt az alkalmazás. Így pedig más fejlesztőt sem mertem bevonni a projektbe.
+
+Megláttam mire lenne szükségem:
+\begin{itemize}
+    \item tesztelésre
+    \item verziókezelése
+    \item kódminőség-ellenőrzésre
+    \item ...és persze mindezt automatizáltan!
+\end{itemize}
+
+A felismerés után a következő lépés az információgyűjtés volt. Pár ismerős cégnél néztem meg "hogyan is csinálják a nagyok". Csalódnom kellett. Olyat is láttam, hogy a verziókezelés a több mappa használatában merült ki. Nem voltam hajlandó elhinni, hogy nincs megoldás ezekre a problémákra a XXI. században. Az internet felé fordultam, és elkezdtem magam felderíteni a technológiákat, és ki is építeni azokat. Persze nem sikerült elsőre tökéleteset alkotni, de elmondhatom, hogy most már a fentebb említett problémákra mind megoldást találtam, amire büszke is vagyok.
+
+Dolgozatom témája is hasonló problémákról szól: hogyan lehet egy kódot több embernek szerkesztenie anélkül hogy a program működésképtelenné válna, illetve a tesztelt működő verziót hogyan lehet leghatékonyabban, akár szolgáltatáskiesés nélkül telepíteni, illetve az erőforráshasználatot skálázni.
+
+Szakdolgozatomban egy példa webalkalmazáson keresztül mutatom be mindezen lépéseket. Az infrastruktúra a felhőben található, a program pedig egy webshop aminek része egy frontend, illetve egy adatbázissal kommunikáló backend. Az alkalmazás kódja verziókezelt, feltételezzük hogy többen dolgoznak rajta, illetve hogy a pillanatnyi szolgáltatáskiesés sem elfogadható (legyen az frissítés, infrastruktúrális hiba, vagy fejlesztői hiba). 
+\newline
+\newline
+\textbf{A feladatmegoldásom forrásfájlai, a szakdolgozat \LaTeX-kódja és PDF változata GitHub-on elérhető: \url{https://github.com/msbence/thesis}}
+\vfill
+\selectenglish
+
+
+%----------------------------------------------------------------------------
+% Abstract in English
+%----------------------------------------------------------------------------
+\chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
+
+Nowadays you can hear more and more words like \textit{Continuous Integration}, \textit{Continuous Deployment} or \textit{Kubernetes}. However, many people don't even know what do these words mean, or how and when use these technologies and tools.
+
+I began to develop software when I was 13 years old. Back then I have used .NET, more precisely C\# and started to write a bigger software. Although it is still only available for a closed group, I have started to realize that many things can come across when somebody wants to release a software to the public: it has to be user-friendly, secure, people should work with it fast, etc... Then the moment came when I felt that the way I work is not efficient enough. I had to keep more and more functions in my head, there were code smells everywhere because of the strict deadlines, and the application was not even tested. Because of these reasons I was afraid to hire a developer to contribute.
+
+I have visioned what I needed:
+\begin{itemize}
+    \item tests
+    \item version control
+    \item code quality checks
+    \item ...and of course all of them in an automatized way!
+\end{itemize}
+
+After the realization the next step came: collecting information. I wanted to see what others do, and I went to some companies. I was disappointed. I even saw one place where version control was the usage of duplicated folders. I did not want to accept that there is no proper way of implement a solution for the problems mentioned above. I've turned to the Internet and tried to figure it out and build something on my own. Of course I did not succeed on the first try, but I can say now that I did found a solution which is working now, and I am proud of it.
+
+The topic of my thesis is about similar problems: how can a code edited by multiple developers without causing bugs in the final product, how could a tested release deployed with zero downtime, and how can you scale an application based on the needs.
+
+In my thesis I will walk the reader through these steps with a sample web application. The infrastructure is in the cloud, and the software is a webshop which consist of a frontend and a backend communicating with a database. The codebase of the application is version controlled and we are assuming that multiple developers will work on it and also: downtime is not acceptable (caused by upgrade, infrastructural failure, or developer error).
+\newline
+\newline
+\textbf{The source of my solution, the \LaTeX-code and the PDF file of my thesis is available on GitHub: \url{https://github.com/msbence/thesis}}
+\vfill
+\selectthesislanguage
+
+\newcounter{romanPage}
+\setcounter{romanPage}{\value{page}}
+\stepcounter{romanPage}

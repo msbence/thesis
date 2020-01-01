@@ -1,0 +1,61 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: jenkins-role-cluster
+rules:
+- apiGroups:
+  - ""
+  - "apps"
+  - "networking.k8s.io"
+  - "autoscaling"
+  resources:
+  - pods
+  - configmaps
+  - deployments
+  - secrets
+  - services
+  - ingresses
+  - apps
+  - horizontalpodautoscalers
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-role-prod
+  namespace: webshop-prod
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: jenkins-role-cluster
+subjects:
+- kind: ServiceAccount
+  name: ci-jenkins
+  namespace: szakdolgozat-aws
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-role-beta
+  namespace: webshop-beta
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: jenkins-role-cluster
+subjects:
+- kind: ServiceAccount
+  name: ci-jenkins
+  namespace: szakdolgozat-aws

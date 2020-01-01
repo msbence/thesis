@@ -1,0 +1,16 @@
+server:
+    port: 8081
+    
+spring:
+    datasource:
+      url: jdbc:postgresql://database:5432/webshop
+      username: postgres
+      password: ...
+      initialization-mode: never
+      hikari:
+        connectionTimeout: 20000
+        maximumPoolSize: 5
+    jpa:
+       show-sql: true
+       hibernate:
+         ddl-auto: validate

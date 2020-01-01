@@ -1,0 +1,54 @@
+def branch_name = "${BRANCH_NAME}"
+pipeline {
+  environment {
+    registry = "123456789.dkr.ecr.eu-central-1.amazonaws.com/webshop-frontend"
+    registryCredential = 'ecr:eu-central-1:aws'
+    dockerImage = ''
+    IMAGE_TAG = "$BUILD_NUMBER-$BRANCH_NAME"
+    NAMESPACE = "webshop-$BRANCH_NAME"
+    DOMAIN = "-api.mbraptor.tech"
+  }
+  agent any
+  stages {
+    stage('Build image') {
+      steps{
+        sh(script: """
+        [ $BRANCH_NAME = "prod" ] && sed -i 's/localhost/webshop${DOMAIN}/g' src/util/constants.js || true
+        [ $BRANCH_NAME = "beta" ] && sed -i 's/localhost/webshop-beta${DOMAIN}/g' src/util/constants.js || true
+        [ $BRANCH_NAME = "beta" ] && sed -i 's/Webshop/Webshop Beta/g' src/components/CategorySwitcher.jsx || true
+        """, returnStdout: true)
+        script {
+          dockerImage = docker.build registry + ":$IMAGE_TAG"
+        }
+      }
+    }
+    stage('Push image to ECR') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        script {
+          docker.withRegistry("https://" + registry, registryCredential) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Remove unused image') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        sh(script: "docker rmi $registry:$IMAGE_TAG", returnStdout: true)
+      }
+    }
+    stage('Deploy to Kubernetes') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        sh(script: "envsubst < frontend-${BRANCH_NAME}.yaml | kubectl -n $NAMESPACE apply -f - && sleep 10", returnStdout: true)
+      }
+    }
+  }
+}

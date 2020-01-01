@@ -1,0 +1,70 @@
+def branch_name = "${BRANCH_NAME}"
+pipeline {
+  environment {
+    registry = "123456789.dkr.ecr.eu-central-1.amazonaws.com/webshop-database"
+    registryCredential = 'ecr:eu-central-1:aws'
+    dockerImage = ''
+    IMAGE_TAG = "$BUILD_NUMBER-$BRANCH_NAME"
+    NAMESPACE = "webshop-$BRANCH_NAME"
+    POD_IP = '$POD_IP'
+  }
+  agent any
+  stages {
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build registry + ":$IMAGE_TAG"
+        }
+      }
+    }
+    stage('Push image to ECR') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        script {
+          docker.withRegistry("https://" + registry, registryCredential) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Remove unused image') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        sh(script: "docker rmi $registry:$IMAGE_TAG", returnStdout: true)
+      }
+    }
+    stage('Apply configuration') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        sh(script: "kubectl -n $NAMESPACE apply -f secrets.yaml", returnStdout: true)
+        sh(script: "kubectl -n $NAMESPACE create configmap database --from-file=postgres.conf --from-file=master.conf --from-file=replica.conf --from-file=pg_hba.conf --from-file=create-replica-user.sh || true", returnStdout: true)
+      }
+    }
+    stage('Deploy master to Kubernetes') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        sh(script: "envsubst < master.yaml | kubectl -n $NAMESPACE apply -f -", returnStdout: true)
+        sh(script: "kubectl -n $NAMESPACE delete -f slave.yaml || true", returnStdout: true)
+        sh(script: "sleep 5 && kubectl -n $NAMESPACE wait --for=condition=Ready pod/database-0 --timeout=90s", returnStdout: true)
+        sh(script: "kubectl -n $NAMESPACE apply -f service.yaml", returnStdout: true)
+      }
+    }
+    stage('Deploy slaves to Kubernetes') {
+      when { 
+        expression { return branch_name ==~ /(prod|beta)/ }
+      }
+      steps{
+        sh(script: "kubectl -n $NAMESPACE apply -f slave.yaml", returnStdout: true)
+        sh(script: "sleep 5 && kubectl -n $NAMESPACE wait --for=condition=Ready pod/database-replica-0 --timeout=90s", returnStdout: true)
+      }
+    }
+  }
+}
